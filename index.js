@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
+const dbUrl = process.env.MYSQL_URL;
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 
@@ -8,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔐 Cambia estos datos por los de tu base de datos MySQL (en la nube o local)
-const db = mysql.createConnection({
+const db = mysql.createConnection(dbUrl)({
     host: '2.139.96.52',           
     user: 'remote_user',
     password: 'your_password',
