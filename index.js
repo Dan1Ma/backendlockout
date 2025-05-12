@@ -9,7 +9,7 @@ app.use(express.json());
 
 // 🔐 Cambia estos datos por los de tu base de datos MySQL (en la nube o local)
 const db = mysql.createConnection({
-    host: '192.168.1.35',           
+    host: '2.139.96.52',           
     user: 'remote_user',
     password: 'your_password',
     database: 'lockout'
