@@ -26,7 +26,8 @@ app.post('/registro', async (req, res) => {
                 return res.status(500).send({ success: false, message: 'Error al obtener ID' });
             }
 
-            const nextId = (results[0].maxId || 0) + 1;
+            const nextId = (results[0].maxId ?? 0) + 1;
+
 
             // 2. Hashear contraseña
             const hash = await bcrypt.hash(contrasena, 10);
