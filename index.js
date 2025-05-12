@@ -20,7 +20,7 @@ app.post('/registro', async (req, res) => {
 
     try {
         // 1. Obtener el id máximo actual
-        db.query('SELECT MAX(idusuarios) AS maxId FROM usuarios', async (err, results) => {
+        db.query('SELECT MAX(id) AS maxId FROM usuarios', async (err, results) => {
             if (err) {
                 console.error(err);
                 return res.status(500).send({ success: false, message: 'Error al obtener ID' });
