@@ -34,7 +34,7 @@ app.post('/registro', async (req, res) => {
 
             // 3. Insertar usuario con ID calculado
             db.query(
-                'INSERT INTO usuarios (idusuarios, nombre, fecha_nacimiento, correo, contrasena) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO usuarios (id, nombre, fecha_nacimiento, correo, contrasena) VALUES (?, ?, ?, ?, ?)',
                 [nextId, nombre, fechaNacimiento, correo, hash],
                 (err2, result) => {
                     if (err2) {
