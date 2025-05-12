@@ -39,7 +39,36 @@ app.post('/registro', async (req, res) => {
     }
 });
 
-// Opcional: también puedes agregar un /login que compare contraseñas luego
+// Ruta para iniciar sesión
+app.post('/login', (req, res) => {
+    const { nombre, contrasena } = req.body;
+
+    if (!nombre || !contrasena) {
+        return res.status(400).send({ success: false, message: 'Faltan datos' });
+    }
+
+    db.query('SELECT * FROM usuarios WHERE nombre = ?', [nombre], async (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ success: false, message: 'Error en la base de datos' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).send({ success: false, message: 'Usuario no encontrado' });
+        }
+
+        const usuario = results[0];
+
+        const coincide = await bcrypt.compare(contrasena, usuario.contrasena);
+
+        if (coincide) {
+            res.send({ success: true, message: 'Inicio de sesión exitoso' });
+        } else {
+            res.status(401).send({ success: false, message: 'Contraseña incorrecta' });
+        }
+    });
+});
+
 
 app.listen(10000, () => {
     console.log('Servidor corriendo en puerto 10000');
