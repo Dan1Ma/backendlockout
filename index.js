@@ -83,6 +83,32 @@ app.post('/login', (req, res) => {
     });
 });
 
+app.get('/buscar-numero', (req, res) => {
+    const numero = req.query.numero;
+
+    if (!numero) {
+        return res.status(400).json({ success: false, message: 'Falta el número' });
+    }
+
+    db.query(
+        'SELECT * FROM telefonos WHERE numero_telefono = ?',
+        [numero],
+        (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ success: false, message: 'Error en la base de datos' });
+            }
+
+            if (results.length === 0) {
+                return res.status(404).json({ success: false, message: 'Número no encontrado' });
+            }
+
+            res.json({ success: true, datos: results[0] });
+        }
+    );
+});
+
+
 
 app.listen(10000, () => {
     console.log('Servidor corriendo en puerto 10000');
