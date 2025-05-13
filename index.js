@@ -91,7 +91,7 @@ app.get('/buscar-numero', (req, res) => {
     }
 
     db.query(
-        'SELECT * FROM telefonos WHERE numero_telefono = ?',
+        'SELECT * FROM numeros_reportados WHERE numero_telefono = ?',
         [numero],
         (err, results) => {
             if (err) {
