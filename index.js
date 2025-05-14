@@ -187,7 +187,7 @@ app.post('/google-login', (req, res) => {
             // Insertar nuevo usuario SIN contraseña ni fecha de nacimiento
             db.query(
                 'INSERT INTO usuarios (nombre, correo, contrasena, fecha_nacimiento) VALUES (?, ?, ?, ?)',
-                [nombre, correo, '', '1900-01-01'],
+                [nombre, correo, '1234', '1900-01-01'],
                 (err2, result2) => {
                     if (err2) {
                         console.error(err2);
