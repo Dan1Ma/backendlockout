@@ -83,6 +83,7 @@ app.post('/login', (req, res) => {
     });
 });
 
+
 app.get('/buscar-numero', (req, res) => {
     const numero = req.query.numero;
 
@@ -106,6 +107,63 @@ app.get('/buscar-numero', (req, res) => {
             res.json({ success: true, datos: results[0] });
         }
     );
+});
+
+app.post('/reportar', (req, res) => {
+    const { numero_telefono, tipo_telefono, ubicacion, descripcion } = req.body;
+
+    if (!numero_telefono || !tipo_telefono || !ubicacion || !descripcion) {
+        return res.status(400).json({ success: false, message: 'Faltan datos' });
+    }
+
+    // Verificamos si el número ya existe
+    db.query('SELECT * FROM numeros_reportados WHERE numero_telefono = ?', [numero_telefono], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Error al consultar la base de datos' });
+        }
+
+        if (results.length > 0) {
+            // Ya existe → solo sumamos 1 a numero_reportes
+            const id = results[0].id;
+            const reportesActuales = results[0].numero_reportes ?? 0;
+
+            db.query(
+                'UPDATE telefonos SET numero_reportes = ? WHERE id = ?',
+                [reportesActuales + 1, id],
+                (err2, result2) => {
+                    if (err2) {
+                        console.error(err2);
+                        return res.status(500).json({ success: false, message: 'Error al actualizar número' });
+                    }
+                    return res.json({ success: true, message: 'Número actualizado (reporte sumado)' });
+                }
+            );
+        } else {
+            // No existe → calculamos nuevo ID manualmente y lo insertamos
+            db.query('SELECT MAX(id) AS maxId FROM numeros_reportados', (err3, results3) => {
+                if (err3) {
+                    console.error(err3);
+                    return res.status(500).json({ success: false, message: 'Error al generar nuevo ID' });
+                }
+
+                const nextId = (results3[0].maxId ?? 0) + 1;
+
+                db.query(
+                    'INSERT INTO numeros_reportados (id, numero_telefono, tipo_telefono, ubicacion, descripcion, numero_reportes) VALUES (?, ?, ?, ?, ?, ?)',
+                    [nextId, numero_telefono, tipo_telefono, ubicacion, descripcion, 1],
+                    (err4, result4) => {
+                        if (err4) {
+                            console.error(err4);
+                            return res.status(500).json({ success: false, message: 'Error al insertar nuevo número' });
+                        }
+
+                        res.json({ success: true, message: 'Número reportado con éxito' });
+                    }
+                );
+            });
+        }
+    });
 });
 
 
