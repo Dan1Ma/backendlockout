@@ -117,7 +117,7 @@ app.post('/reportar', (req, res) => {
     }
 
     // Verificamos si el número ya existe
-    db.query('SELECT * FROM numeros_reportados WHERE numero_telefono = ?', [numero_telefono], (err, results) => {
+    db.query('SELECT * FROM numerosreportados WHERE numero_telefono = ?', [numero_telefono], (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ success: false, message: 'Error al consultar la base de datos' });
@@ -129,7 +129,7 @@ app.post('/reportar', (req, res) => {
             const reportesActuales = results[0].numero_reportes ?? 0;
 
             db.query(
-                'UPDATE numeros_reportados SET numero_reportes = ? WHERE id = ?',
+                'UPDATE numerosreportados SET numero_reportes = ? WHERE id = ?',
                 [reportesActuales + 1, id],
                 (err2, result2) => {
                     if (err2) {
@@ -141,7 +141,7 @@ app.post('/reportar', (req, res) => {
             );
         } else {
             // No existe → calculamos nuevo ID manualmente y lo insertamos
-            db.query('SELECT MAX(id) AS maxId FROM numeros_reportados', (err3, results3) => {
+            db.query('SELECT MAX(id) AS maxId FROM numerosreportados', (err3, results3) => {
                 if (err3) {
                     console.error(err3);
                     return res.status(500).json({ success: false, message: 'Error al generar nuevo ID' });
@@ -150,7 +150,7 @@ app.post('/reportar', (req, res) => {
                 const nextId = (results3[0].maxId ?? 0) + 1;
 
                 db.query(
-                    'INSERT INTO numeros_reportados (id, numero_telefono, tipo_telefono, ubicacion, descripcion, numero_reportes) VALUES (?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO numerosreportados (id, numero_telefono, tipo_telefono, ubicacion, descripcion, numero_reportes) VALUES (?, ?, ?, ?, ?, ?)',
                     [nextId, numero_telefono, tipo_telefono, ubicacion, descripcion, 1],
                     (err4, result4) => {
                         if (err4) {
