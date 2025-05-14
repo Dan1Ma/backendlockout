@@ -166,6 +166,39 @@ app.post('/reportar', (req, res) => {
     });
 });
 
+app.post('/google-login', (req, res) => {
+    const { nombre, correo } = req.body;
+
+    if (!nombre || !correo) {
+        return res.status(400).json({ success: false, message: 'Faltan datos' });
+    }
+
+    // Verificamos si ya existe el correo
+    db.query('SELECT * FROM usuarios WHERE correo = ?', [correo], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Error en la base de datos' });
+        }
+
+        if (results.length > 0) {
+            // Ya existe, no se inserta
+            return res.json({ success: true, message: 'Inicio con Google correcto (usuario ya registrado)' });
+        } else {
+            // Insertar nuevo usuario SIN contraseña ni fecha de nacimiento
+            db.query(
+                'INSERT INTO usuarios (nombre, correo, contrasena, fecha_nacimiento) VALUES (?, ?, ?, ?)',
+                [nombre, correo, '', '1900-01-01'],
+                (err2, result2) => {
+                    if (err2) {
+                        console.error(err2);
+                        return res.status(500).json({ success: false, message: 'Error al insertar nuevo usuario' });
+                    }
+                    return res.json({ success: true, message: 'Usuario Google registrado correctamente' });
+                }
+            );
+        }
+    });
+});
 
 
 app.listen(10000, () => {
