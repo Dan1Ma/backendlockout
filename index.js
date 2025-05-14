@@ -234,6 +234,35 @@ app.post('/actualizar-perfil', (req, res) => {
     });
 });
 
+const axios = require('axios');
+
+// Ruta para obtener noticias sobre estafas
+app.get('/noticias', async (req, res) => {
+    try {
+        const response = await axios.get('https://newsapi.org/v2/everything', {
+            params: {
+                q: 'estafa OR fraude OR phishing OR scam',
+                language: 'es',
+                sortBy: 'publishedAt',
+                pageSize: 10,
+                apiKey: process.env.NEWS_API_KEY
+            }
+        });
+
+        const articulos = response.data.articles.map(art => ({
+            titulo: art.title,
+            resumen: art.description ?? '',
+            url: art.url
+        }));
+
+        res.json({ success: true, noticias: articulos });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Error al obtener noticias' });
+    }
+});
+
+
 
 app.listen(10000, () => {
     console.log('Servidor corriendo en puerto 10000');
