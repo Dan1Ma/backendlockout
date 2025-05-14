@@ -55,13 +55,13 @@ app.post('/registro', async (req, res) => {
 
 // Ruta para iniciar sesión
 app.post('/login', (req, res) => {
-    const { nombre, contrasena } = req.body;
+    const { correo, contrasena } = req.body;
 
-    if (!nombre || !contrasena) {
+    if (!correo || !contrasena) {
         return res.status(400).send({ success: false, message: 'Faltan datos' });
     }
 
-    db.query('SELECT * FROM usuarios WHERE nombre = ?', [nombre], async (err, results) => {
+    db.query('SELECT * FROM usuarios WHERE correo = ?', [correo], async (err, results) => {
         if (err) {
             console.error(err);
             return res.status(500).send({ success: false, message: 'Error en la base de datos' });
