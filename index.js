@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔐 Cambia estos datos por los de tu base de datos MySQL (en la nube o local)
+
 const db = mysql.createConnection(dbUrl);
 // Ruta para registrar usuario
 app.post('/registro', async (req, res) => {
