@@ -129,7 +129,7 @@ app.post('/reportar', (req, res) => {
             const reportesActuales = results[0].numero_reportes ?? 0;
 
             db.query(
-                'UPDATE telefonos SET numero_reportes = ? WHERE id = ?',
+                'UPDATE numeros_reportados SET numero_reportes = ? WHERE id = ?',
                 [reportesActuales + 1, id],
                 (err2, result2) => {
                     if (err2) {
