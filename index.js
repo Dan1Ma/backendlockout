@@ -200,6 +200,40 @@ app.post('/google-login', (req, res) => {
     });
 });
 
+app.post('/actualizar-perfil', (req, res) => {
+    const { nombre, correo, fechaNacimiento } = req.body;
+
+    if (!nombre || !correo || !fechaNacimiento) {
+        return res.status(400).json({ success: false, message: 'Faltan datos obligatorios' });
+    }
+
+    // Verifica si el usuario existe
+    db.query('SELECT * FROM usuarios WHERE correo = ?', [correo], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ success: false, message: 'Error al consultar el usuario' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
+
+        // Actualizar los datos
+        db.query(
+            'UPDATE usuarios SET nombre = ?, fecha_nacimiento = ? WHERE correo = ?',
+            [nombre, fechaNacimiento, correo],
+            (err2, result2) => {
+                if (err2) {
+                    console.error(err2);
+                    return res.status(500).json({ success: false, message: 'Error al actualizar el perfil' });
+                }
+
+                res.json({ success: true, message: 'Perfil actualizado correctamente' });
+            }
+        );
+    });
+});
+
 
 app.listen(10000, () => {
     console.log('Servidor corriendo en puerto 10000');
